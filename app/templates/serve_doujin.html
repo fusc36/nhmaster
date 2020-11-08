@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Stuff</title>
+		<link rel="stylesheet" type="text/css" href="/static/portrait.css">
+	</head>
+	<body>
+		<div>
+			{% if prev_link %}<form action="{{ prev_link }}" style="float: left;"><input type="submit" value="Prev" /></form> {% endif %}
+			<form action="/" style="float: center;"><input type="submit" value="Home" /></form>
+			{% if next_link %}<form action="{{ next_link }}" style="float: right;"><input type="submit" value="Next" /></form> {% endif %}
+		</div>
+		<div class="imagebox">
+			{% if next_link %}<a href="{{ next_link }}">{% endif %}
+				<img src="{{ cur_path }}">
+			{% if next_link %}</a>{% endif %}
+		</div>
+	</body>
+	<script>
+		document.body.addEventListener("keydown", function (event) {
+			{% if prev_link %}
+			if (event.keyCode === 37) {
+				window.location.href = "{{ prev_link }}";
+				console.log("back");
+			}
+			{% endif %}
+			{% if next_link %}
+			if (event.keyCode === 39) {
+				window.location.href = "{{ next_link }}";
+				console.log("next");
+			}
+			{% endif %}
+		});
+	</script>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Index</title>
+		<link rel="stylesheet" href="/static/index.css">
+	</head>
+	<body>
+		<div class="grid-container">
+			{% for (id, title) in hasht.iter() %}
+			<div class="grid-item">
+				<a href="{{ "/%s/" % id }}"><img class="thumbnail" src="{{ hasht.retr(id, 1) }}"></a>
+				<p class="title">{{ title }}</p>
+			</div>
+			{% endfor %}
+		</div>
+	</body>
+</html>
