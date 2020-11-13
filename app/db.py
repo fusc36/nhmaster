@@ -1,9 +1,10 @@
 import os
-from .download import batch_download, master_to_ids
+from .download import download, batch_download, master_to_ids
 import hentai
 from pathlib import Path
 
 class DB:
+	db = None
 	def __init__(self, path, master, console=False):
 		self.path = path
 		self.db_fpath = os.path.join(self.path, 'db.txt')
@@ -15,6 +16,10 @@ class DB:
 		Path(self.hasht).touch()
 		Path(self.master).touch()
 		Path(self.db_fpath).touch()
+
+	@classmethod
+	def set_obj(cls, db):
+		cls.db = db
 
 	def load_ids(self):
 		Path(self.db_fpath).touch()
@@ -63,11 +68,19 @@ class DB:
 			print(master_ids)
 			print(ids_set)
 			print(download_batch)
-		batch_download(download_batch, self.path, filter=filter, extend_list=self.ids, use_tqdm = self.console or use_tqdm)
+		batch_download(download_batch, self.path, filter=filter, extend_list=self.ids, use_tqdm=self.console or use_tqdm, on_complete=self.update)
 		for id in download_batch:
 			title = hentai.Hentai(id).title(hentai.Format.Pretty)
 			self.doujins[id] = title
 		self.update()
+
+	def add(self, id):
+		doujin = hentai.Hentai(id)
+		if id not in self.ids:
+			download(doujin, self.path)
+			title = hentai.Hentai(id).title(hentai.Format.Pretty)
+			self.doujins[id] = title
+			self.update()
 
 	def update(self):
 		with open(self.db_fpath, 'w') as f:

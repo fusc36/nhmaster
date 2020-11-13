@@ -1,7 +1,7 @@
 class Config:
 	path = '' # Path to directory storing doujins
 	master_path = '' # Path to a "masterlist" text file containing doujin links/#s to download
-	filter = lambda doujin: filter_language(doujin) # Function that determines what links/#s get downloaded
+	filter = lambda doujin: filter_none(doujin) # Function that determines what links/#s get downloaded
 	port = '8100'
 
 def filter_language(doujin, lang=['english']):

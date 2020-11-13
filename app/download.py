@@ -17,7 +17,7 @@ def download(doujin, path):
 	else:
 		return doujin.download(dest=Path(path))
 
-def batch_download(ids, path, filter=lambda x: x, extend_list=None, use_tqdm=False):
+def batch_download(ids, path, filter=lambda x: x, extend_list=None, use_tqdm=False, on_complete=lambda x: None):
 	ids_tqdm = tqdm(ids) if use_tqdm else ids
 	for id in ids_tqdm:
 		if hentai.Hentai.exists(id):
@@ -26,6 +26,7 @@ def batch_download(ids, path, filter=lambda x: x, extend_list=None, use_tqdm=Fal
 				download(doujin, path)
 				if isinstance(extend_list, list):
 					extend_list.append(id)
+				on_complete()
 
 def master_to_ids(fpath, verbose=False):
 	with open(fpath) as f:

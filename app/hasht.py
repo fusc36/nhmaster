@@ -35,6 +35,11 @@ class HashT:
 		if os.path.isfile(actpath):
 			pattern = '/static/doujins/%s/%s.jpg' % (cls.hasht[id], pagenum)
 			return quote(pattern, safe='/:?=&')
+		else:
+			actpath = os.path.join(os.path.join(cls.path, cls.hasht[id]), str(pagenum) + '.png')
+			if os.path.isfile(actpath):
+				pattern = '/static/doujins/%s/%s.png' % (cls.hasht[id], pagenum)
+				return quote(pattern, safe='/:?=&')
 		return None
 
 	@classmethod

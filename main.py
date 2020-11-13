@@ -1,5 +1,5 @@
 from config import Config
-from src.db import DB
+from app.db import DB
 import time
 from pathlib import Path
 
