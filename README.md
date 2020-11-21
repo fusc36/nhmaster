@@ -8,6 +8,7 @@ Several things about this project that are bad (that I plan to fix/replace):
 * Needs a better UI that doesn't look like an nginx sample web page
 * More documentation
 * ~~Ability to add doujin links from the web interface~~ Access through `/downloads`
+
 If you want to add features/fix bugs, feel free to send a pull request or fork the repo (but that goes without saying).
 
 # Setup
