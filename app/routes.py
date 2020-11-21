@@ -1,36 +1,86 @@
-from flask import Flask, url_for, redirect, render_template, request
-from .hasht import HashT
+from flask import Flask, render_template, redirect, url_for, request
 from .db import DB
-from .download import get_id
+from .tasks import TaskManager
+import traceback
+
 
 app = Flask(__name__)
+cache = {}
+
 
 @app.route('/')
-@app.route('/index', methods=['GET'])
+@app.route('/index')
 def index():
-	HashT.load()
-	return render_template('index.html', hasht=HashT)
-
-@app.route('/<int:id>/<int:pagenum>')
-def retr_page(id, pagenum):
-	cur_path = HashT.retr(id, pagenum)
-	prev_link = url_for('retr_page', id=id, pagenum=pagenum-1) if pagenum > 1 else None
-	next_link = url_for('retr_page', id=id, pagenum=pagenum+1) if HashT.retr(id, pagenum+1) else None
-	return render_template('serve_doujin.html', cur_path=cur_path, prev_link=prev_link, next_link=next_link)
+	global cache
+	cache = {}
+	return render_template('index.html', db=DB)
 
 @app.route('/<int:id>/')
-def retr_cover(id):
-	return redirect(url_for('retr_page', id=id, pagenum=1))
+@app.route('/<int:id>')
+def first_page(id):
+	return redirect(url_for('doujin_serve', id=id, page_number=1))
+
+@app.route('/<int:id>/<int:page_number>/')
+@app.route('/<int:id>/<int:page_number>')
+def doujin_serve(id, page_number):
+	global cache
+	if cache.get(id):
+		cache_set = False
+		json = cache.get(id)
+	else:
+		cache_set = True
+		json = DB.get(id)
+	if json and json.get('num_pages') >= page_number and page_number >= 1:
+		if not cache and cache_set:
+			cache[id] = json
+		elif cache and cache_set:
+			cache = {id: json}
+		return render_template('serve_doujin.html', db=DB, json=json, pnumber=page_number, id=id)
+	return 404
 
 @app.route('/download', methods=['GET'])
-def download_page():
-	return render_template('download.html')
+def doujin_download():
+	return render_template('download.html', db=DB)
 
 @app.route('/download', methods=['POST'])
-def download():
-	id_raw = request.form.get('id')
-	if not id_raw:
-		return 400
-	id = get_id(id_raw)
-	DB.db.add(id)
-	HashT.load()
+def doujin_download_post():
+	download_ids = request.form.get('id').replace('\n', ' ')
+	ids = []
+	for id in download_ids.split(' '):
+		#print(repr(id))
+		id_int = url_to_id(id)
+		if id_int:
+			def subtask_creator(id_int): #This is a workaround so that we don't keep downloading the same fucking id. Fuck this system. Sorry for the inelegant system.
+				def subtask():
+					if not DB.get(id_int):
+						try:
+							DB.add_new(id_int)
+							return 'Complete'
+						except Exception as e:
+							return 'Error downloading #%s: <%s>' % (id_int, traceback.format_exc())
+					#print("%s was already in the dict" % id_int)
+					return 'ID Found in DB'
+				return subtask
+			TaskManager.add_task(id_int, subtask_creator(id_int))
+			#print('added %s' % id_int)
+		ids.append(id_int)
+	print('%s ids' % len(set(ids)))
+
+	return redirect(url_for('doujin_download_tasks'))
+
+@app.route('/tasks', methods=['GET'])
+def doujin_download_tasks():
+	def sort_by(x):
+		return x[1]
+	return render_template('tasks.html', task_manager=TaskManager)
+
+
+
+def url_to_id(url):
+	try:
+		tokens = url.split('/')
+		if (tokens[-1] == '' or tokens[-1] == '\r') and len(tokens) > 1:
+			return int(tokens[-2])
+		return int(tokens[-1])
+	except:
+		return None

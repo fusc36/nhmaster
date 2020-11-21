@@ -7,10 +7,10 @@
 	<body>
 		<form action="/download"><input type="submit" value="Add new link/id" /></form><br>
 		<div class="grid-container">
-			{% for (id, title) in hasht.iter() %}
+			{% for (id, json) in db.get_all() %}
 			<div class="grid-item">
-				<a href="{{ "/%s/" % id }}"><img class="thumbnail" src="{{ hasht.retr(id, 1) }}"></a>
-				<p class="title">{{ title }}</p>
+				<a href="{{ "/%s/" % id }}"><img class="thumbnail" src="{{ db.get_file_path(id, 1) }}"></a>
+				<p class="title">{{ json.get('title') }}</p>
 			</div>
 			{% endfor %}
 		</div>

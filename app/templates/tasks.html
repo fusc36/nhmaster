@@ -1,0 +1,40 @@
+{% set recent_complete = task_manager.get_completed(key=sort_by, reverse=True) %}
+{% set recent_error = task_manager.get_errored(key=sort_by, reverse=True) %}
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tasks</title>
+		<link rel="text/stylesheet" href="/static/tasks.css">
+	</head>
+	<body>
+		<a href="/"><button>Home</button></a> 
+		<h4>Processing</h4>
+		<div id="processing">
+			{% if task_manager.cur_task %}
+				{{ task_manager.cur_task }}
+			{% else %}
+				<p>Not currently processing any tasks...</p>
+			{% endif %}
+		</div><br>
+		<h4>Queued</h4>
+		<div id="queued" class="grid-container">
+			{% for (id, _) in task_manager.queue %}
+				<div class="grid-item">{{ id }}</div>
+			{% endfor %}
+		</div><br>
+		<h4>Complete</h4>
+		<div id="complete" class="grid-container">
+			{% for id in recent_complete %}
+			<div class="grid-item">Complete - {{ id }}</div>
+			{% endfor %}
+		</div><br>
+		<h4>Errors</h4>
+		<div id="error" class="grid-container">
+			{% for (_, result) in recent_error %}
+			<div class="grid-item">{{ result }}</div>
+			{% endfor %}
+		</div>
+	</body>
+</html>

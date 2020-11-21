@@ -1,89 +1,106 @@
-import os
-from .download import download, batch_download, master_to_ids
+import json
 import hentai
-from pathlib import Path
+import pathlib
+from urllib.parse import quote
+import os
+from pprint import pprint
+
+'''
+Methods
+	- set_path(path)		sets the path
+	- loads()			loads the json file in the path
+	- add_new(id)			Adds the id to the database (and downloads)
+	- add_json(doujin)		Adds the json info from the doujin obj
+	- get(id)			Retrieves the json info at <id>
+	- update()			Updates the json file at path with current info
+	- get_all()			Returns all jsons
+	- get_file_path(id, page_num)	Returns the path of the image file for <id> and <page_num>
+'''
+
 
 class DB:
-	db = None
-	def __init__(self, path, master, console=False):
-		self.path = path
-		self.db_fpath = os.path.join(self.path, 'db.txt')
-		self.master = master
-		self.ids = self.load_ids()
-		self.doujins = self.load_dict()
-		self.console = console
-		self.hasht = os.path.join(self.path, 'hasht.txt')
-		Path(self.hasht).touch()
-		Path(self.master).touch()
-		Path(self.db_fpath).touch()
+	doujins = {}
+	path = ''
+	db_path = ''
 
 	@classmethod
-	def set_obj(cls, db):
-		cls.db = db
+	def set_path(cls, path):
+		cls.path = path
+		cls.db_path = os.path.join(cls.path, 'db.json')
 
-	def load_ids(self):
-		Path(self.db_fpath).touch()
-		with open(self.db_fpath) as f:
-			contents = f.read()
-		ids = []
-		for line in contents.split('\n'):
-			try:
-				ids.append(int(line))
-			except:
-				pass
-		return ids
-
-	def load_dict(self):
+	@classmethod
+	def load(cls):
+		'''Loads the json file at path into DB'''
+		if not cls.db_path:
+			return None
+		with open(cls.db_path) as f:
+			json_out = json.loads(f.read())
 		d = {}
-		'''
-		for id in self.ids:
-			doujin = hentai.Hentai(id)
-			d[id] = doujin.title(hentai.Format.Pretty)
-		return d
-		'''
-		hasht_path = os.path.join(self.path, 'hasht.txt')
-		Path(hasht_path).touch()
-		with open(hasht_path) as f:
-			contents = f.read()
-		for line in contents.split('\n'):
-			if not line:
-				pass
-			try:
-				tokens = line.split(',')
-				id = int(tokens[0])
-				dirname = ','.join(tokens[1:])
-				d[id] = dirname
-			except:
-				pass
-		return d
+		for key in json_out.keys():
+			temp = json_out[key]
+			d[int(key)] = temp
+		cls.doujins = d
 
-
-	def download_new(self, master_file=None, filter=lambda doujin: True, use_tqdm=False):
-		if not master_file:
-			master_file = self.master
-		master_ids = set(master_to_ids(master_file, verbose=True))
-		ids_set = set(self.ids)
-		download_batch = [id for id in master_ids if id not in ids_set]
-		if use_tqdm or self.console:
-			print(master_ids)
-			print(ids_set)
-			print(download_batch)
-		batch_download(download_batch, self.path, filter=filter, extend_list=self.ids, use_tqdm=self.console or use_tqdm, on_complete=self.update)
-		for id in download_batch:
-			title = hentai.Hentai(id).title(hentai.Format.Pretty)
-			self.doujins[id] = title
-		self.update()
-
-	def add(self, id):
+	@classmethod
+	def add_new(cls, id):
+		'''Adds id'''
+		# Get json
 		doujin = hentai.Hentai(id)
-		if id not in self.ids:
-			download(doujin, self.path)
-			title = hentai.Hentai(id).title(hentai.Format.Pretty)
-			self.doujins[id] = title
-			self.update()
+		d_json = cls.add_json(doujin)
+		# Download
+		doujin.download(dest=pathlib.Path(cls.path))
+		new_path =  os.path.join(cls.path, str(id))
+		try:
+			os.rename(os.path.join(cls.path, d_json['title']), new_path)
+		except:
+			pass
+		with open(os.path.join(new_path, 'info.json'), 'w') as f:
+			f.write(json.dumps(d_json))
+		cls.update()
 
-	def update(self):
-		with open(self.db_fpath, 'w') as f:
-			f.write('\n'.join([str(id) for id in self.ids]))
-		with open(self.hasht, 'w') as f:
-			f.write('\n'.join(['%s,%s' % (key, value) for (key, value) in self.doujins.items()]))
+	@classmethod
+	def add_json(cls, hentai_obj):
+		h_json = hentai_obj.json
+		id = int(h_json['id'])
+		num_pages = h_json['num_pages']
+		title = h_json['title']['pretty']
+		tags = [dict['name'] for dict in h_json['tags']]
+		db_json = {
+			'num_pages': int(num_pages),
+			'title': title,
+			'tags': tags
+		}
+		cls.doujins[id] = db_json
+		return db_json
+
+	@classmethod
+	def get(cls, id):
+		return cls.doujins.get(id)
+
+	@classmethod
+	def update(cls):
+		pprint(cls.doujins)
+		with open(cls.db_path, 'w') as f:
+			f.write(json.dumps(cls.doujins))
+
+	@classmethod
+	def get_all(cls):
+		return [(id, cls.doujins[id]) for id in cls.doujins.keys()]
+
+	@classmethod
+	def get_file_path(cls, id, page_number):
+		jpg_snippet = os.path.join(str(id), str(page_number) + '.jpg')
+		png_snippet = os.path.join(str(id), str(page_number) + '.png')
+		if not cls.path:
+			return None
+		jpg_test = os.path.join(cls.path, jpg_snippet)
+		png_test = os.path.join(cls.path, png_snippet)
+		if os.path.exists(jpg_test):
+			jpg = os.path.join('/static/doujins', jpg_snippet)
+			return jpg
+		elif os.path.exists(png_test):
+			png = os.path.join('/static/doujins', png_snippet)
+			return png
+		print('Neither %s nor %s existed for id #%s' % (jpg_test, png_test, id))
+		return None
+

@@ -1,35 +1,82 @@
+{% set total_pagenum = json.get('num_pages') %}
+{% set prev_link = '/' ~ id ~ '/' ~ (pnumber - 1) %}
+{% set next_link = '/' ~ id ~ '/' ~ (pnumber + 1) %}
+
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Stuff</title>
+		<title>Page {{ pnumber }}</title>
 		<link rel="stylesheet" type="text/css" href="/static/portrait.css">
 	</head>
 	<body>
-		<div>
-			{% if prev_link %}<form action="{{ prev_link }}" style="float: left;"><input type="submit" value="Prev" /></form> {% endif %}
+		<p class="label">Page {{ pnumber }} of {{ total_pagenum }}</p>
+		<div id="navbar">
+			{% if pnumber > 1 %}<form action="{{ prev_link }}" style="float: left;"><input type="submit" value="Prev" /></form> {% endif %}
 			<form action="/" style="float: center;"><input type="submit" value="Home" /></form>
-			{% if next_link %}<form action="{{ next_link }}" style="float: right;"><input type="submit" value="Next" /></form> {% endif %}
+			{% if pnumber < total_pagenum %}<form action="{{ next_link }}" style="float: right;"><input type="submit" value="Next" /></form> {% endif %}
 		</div>
 		<div class="imagebox">
-			{% if next_link %}<a href="{{ next_link }}">{% endif %}
-				<img src="{{ cur_path }}">
-			{% if next_link %}</a>{% endif %}
+			{% if pnumber < total_pagenum %}<a href="{{ next_link }}">{% endif %}
+				<img src="{{ db.get_file_path(id, pnumber) }}">
+			{% if pnumber < total_pagenum %}</a>{% endif %}
 		</div>
 	</body>
 	<script>
+		// Quick Navigation
 		document.body.addEventListener("keydown", function (event) {
 			{% if prev_link %}
-			if (event.keyCode === 37) {
+			if (event.keyCode === 37 || event.keyCode === 52) {
 				window.location.href = "{{ prev_link }}";
 				console.log("back");
 			}
 			{% endif %}
 			{% if next_link %}
-			if (event.keyCode === 39) {
+			if (event.keyCode === 39 || event.keyCode === 53) {
 				window.location.href = "{{ next_link }}";
 				console.log("next");
 			}
 			{% endif %}
+			if (event.keyCode === 54) {
+				window.location.href = "/";
+			}
 		});
+		// Cache Images
+		// Credit to https://stackoverflow.com/questions/10240110/how-do-you-cache-an-image-in-javascript
+		function preloadImages(array, waitForOtherResources, timeout) {
+			var loaded = false, list = [], imgs = array.slice(0), t = timeout || 15*1000, timer;
+			if (!waitForOtherResources || document.readyState === 'complete') {
+				loadNow();
+			} else {
+				window.addEventListener("load", function() {
+					clearTimeout(timer);
+					loadNow();
+				});
+				timer = setTimeout(loadNow, t);
+			}
+			function loadNow() {
+				if (!loaded) {
+					loaded = true;
+					for (var i = 0; i < imgs.length; i++) {
+						var img = new Image();
+						img.onload = img.onerror = img.onabort = function() {
+							var index = list.indexOf(this);
+							if (index !== -1) {
+								list.splice(index, 1);
+							}
+						}
+						list.push(img);
+						img.src = imgs[i]
+					}
+				}
+			}
+		}
+		preloadImages([
+			{% if pnumber > 1 %}
+				"{{ db.get_file_path(id, pnumber - 1) }}",
+			{% endif %}
+			{% if pnumber < total_pagenum%}
+				"{{ db.get_file_path(id, pnumber + 1) }}",
+			{% endif %}
+		], true);
 	</script>
 </html>
