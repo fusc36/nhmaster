@@ -1,3 +1,8 @@
+11/21/2020
+================
+* Removed masterlists and `hasht.txt`, replaced with JSON info in directory
+* Added a task list page on the webapp to monitor tasks that are still queueing
+
 11/13/2020
 ================
 * Added a url/id download page (to download while the server is launched)
