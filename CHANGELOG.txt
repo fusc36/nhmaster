@@ -1,3 +1,7 @@
+11/22/2020
+================
+* App now downloads in parallel. `max_concurrent_downloads` in `config.py` determines the maximum number of downloads that can be done in parallel.
+
 11/21/2020
 ================
 * Removed masterlists and `hasht.txt`, replaced with JSON info in directory

@@ -1,5 +1,6 @@
 import os
-import pathlib
 from config import Config
 
-pathlib.Path(os.path.join(Config.doujin_path, 'db.json')).touch()
+db_path = os.path.join(Config.doujin_path, 'db.json')
+with open(db_path, 'w') as f:
+	f.write('{}')

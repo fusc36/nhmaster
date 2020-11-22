@@ -79,7 +79,7 @@ class DB:
 
 	@classmethod
 	def update(cls):
-		pprint(cls.doujins)
+		#pprint(cls.doujins)
 		with open(cls.db_path, 'w') as f:
 			f.write(json.dumps(cls.doujins))
 

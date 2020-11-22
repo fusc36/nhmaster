@@ -14,24 +14,37 @@ class TaskManager:
 	queue = []
 	main_thread = None
 	terminate = False
-	cur_task = None
+	cur_tasks = []
 	recent_complete = []
 	recent_error = []
+	__thread_pool = []
+	thread_pool_limit = 5
+
+	@classmethod
+	def dl(cls, id, task):
+		#print('Launched task #%s' % id)
+		cls.cur_tasks.append(id)
+		result = task()
+		cls.cur_tasks.remove(id)
+		if result == 'Complete':
+			cls.recent_complete.append(id)
+		elif result.startswith('Error') or result.startswith('ID'):
+			cls.recent_error.append((id, result))
+
 
 	@classmethod
 	def main_loop(cls):
 		while True:
-			if len(cls.queue) > 0:
-				(id, task) = cls.queue.pop(0)
-				cls.cur_task = id
-				result = task()
-				cls.cur_task = None
-				if result == 'Complete':
-					cls.recent_complete.append(id)
-				elif result.startswith('Error') or result.startswith('ID'):
-					cls.recent_error.append((id, result))
+			if len(cls.queue) > 0 and len(cls.__thread_pool) < cls.thread_pool_limit:
+				id, task = cls.queue.pop(0)
+				t = Thread(target=cls.dl, args=(id, task))
+				t.start()
+				cls.__thread_pool.append(t)
 			if cls.terminate:
 				break
+			for i, thread in enumerate(cls.__thread_pool):
+				if not thread.is_alive():
+					cls.__thread_pool.pop(i)
 
 	@classmethod
 	def start(cls):

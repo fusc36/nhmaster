@@ -10,10 +10,13 @@
 	</head>
 	<body>
 		<a href="/"><button>Home</button></a> 
+		<h4>Max Concurrent Downloads: {{ task_manager.thread_pool_limit }}</h4>
 		<h4>Processing</h4>
 		<div id="processing">
-			{% if task_manager.cur_task %}
-				{{ task_manager.cur_task }}
+			{% if task_manager.cur_tasks|length > 0 %}
+				{% for task_id in task_manager.cur_tasks %}
+					{{ task_id }}
+				{% endfor %}
 			{% else %}
 				<p>Not currently processing any tasks...</p>
 			{% endif %}

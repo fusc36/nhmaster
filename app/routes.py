@@ -64,7 +64,7 @@ def doujin_download_post():
 			TaskManager.add_task(id_int, subtask_creator(id_int))
 			#print('added %s' % id_int)
 		ids.append(id_int)
-	print('%s ids' % len(set(ids)))
+	#print('%s ids' % len(set(ids)))
 
 	return redirect(url_for('doujin_download_tasks'))
 
