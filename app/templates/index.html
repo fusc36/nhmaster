@@ -21,26 +21,34 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript">
 	const URL = '/api';
-	var masterlist = {}
+	var masterlist = [];
+	// var masterlist = {};
 	function update_list() {
 		$.get(URL, function(data, status) {
-			masterlist = data;
+			var list = [];
+			for (const [id, json] of Object.entries(data)) {
+				var vdata = Object.assign({}, json);
+				vdata['id'] = id;
+				list.push(vdata);
+			}
+			masterlist = list;
 			load_thumbnails();
 		});
 	}
 	function load_thumbnails() {
 		// Clear tag inside
 		$('#grid-container').empty();
-		for (const [key, value] of Object.entries(masterlist)) {
-			var title = value['title'];
-			var thumbnail_url = value['thumbnail'];
+		masterlist.forEach(function (item, idx) {
+			var id = item['id'];
+			var title = item['title'];
+			var thumbnail_url = item['thumbnail'];
 			var img_tag = $('<img></img>').attr('class', 'thumbnail').attr('src', thumbnail_url);
-			var link_tag = $('<a></a>').attr('href', '/' + key + '/').append(img_tag)
+			var link_tag = $('<a></a>').attr('href', '/' + id + '/').append(img_tag)
 			var title_tag = $('<p></p>').attr('class', 'title').text(title);
 			var grid_item_tag = $('<div></div>').attr('class', 'grid-item').append(link_tag, title_tag);
 			$('#grid-container').append(grid_item_tag);
-			console.log('added ' + key);
-		}
+			console.log('added ' + id);
+		});
 	}
 	update_list();
 	</script>

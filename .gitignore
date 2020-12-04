@@ -141,6 +141,10 @@ cython_debug/
 config.py
 
 # ln
+app/
+app/doujins/
+app/static/doujins/
 
-doujins/
-app/doujins/*
+# Custom setup scripts
+setup.sh
+
