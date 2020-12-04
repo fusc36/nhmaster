@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, jsonify
 from .db import DB
 from .tasks import TaskManager
 import traceback
@@ -74,6 +74,14 @@ def doujin_download_tasks():
 		return x[1]
 	return render_template('tasks.html', task_manager=TaskManager)
 
+@app.route('/api')
+def retrieve_json_data():
+	doujins = DB.doujins.copy() # We should copy it so we don't modify it
+	for id in doujins.keys():
+		doujins[id]['thumbnail'] = DB.get_file_path(id, 1)
+	return jsonify(doujins)
+
+
 
 
 def url_to_id(url):
@@ -84,3 +92,4 @@ def url_to_id(url):
 		return int(tokens[-1])
 	except:
 		return None
+

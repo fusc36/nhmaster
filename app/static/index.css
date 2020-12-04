@@ -12,3 +12,7 @@
 .title {
 	text-align: center;
 }
+
+.topbar {
+	float: left;
+}

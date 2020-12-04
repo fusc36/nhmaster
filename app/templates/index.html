@@ -5,14 +5,44 @@
 		<link rel="stylesheet" href="/static/index.css">
 	</head>
 	<body>
-		<form action="/download"><input type="submit" value="Add new link/id" /></form><br>
-		<div class="grid-container">
+		<form action="/download"><input class="topbar" type="submit" value="Add new link/id" /></form>
+		<form action="/tasks"><input class="topbar" type="submit" value="Visit Tasks Page" /></form>
+		<button class="topbar" onclick="update_list()">Refresh</button><br><br>
+		<div class="grid-container" id="grid-container">
+			<!--
 			{% for (id, json) in db.get_all() %}
 			<div class="grid-item">
 				<a href="{{ "/%s/" % id }}"><img class="thumbnail" src="{{ db.get_file_path(id, 1) }}"></a>
 				<p class="title">{{ json.get('title') }}</p>
 			</div>
 			{% endfor %}
+			-->
 		</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript">
+	const URL = '/api';
+	var masterlist = {}
+	function update_list() {
+		$.get(URL, function(data, status) {
+			masterlist = data;
+			load_thumbnails();
+		});
+	}
+	function load_thumbnails() {
+		// Clear tag inside
+		$('#grid-container').empty();
+		for (const [key, value] of Object.entries(masterlist)) {
+			var title = value['title'];
+			var thumbnail_url = value['thumbnail'];
+			var img_tag = $('<img></img>').attr('class', 'thumbnail').attr('src', thumbnail_url);
+			var link_tag = $('<a></a>').attr('href', '/' + key + '/').append(img_tag)
+			var title_tag = $('<p></p>').attr('class', 'title').text(title);
+			var grid_item_tag = $('<div></div>').attr('class', 'grid-item').append(link_tag, title_tag);
+			$('#grid-container').append(grid_item_tag);
+			console.log('added ' + key);
+		}
+	}
+	update_list();
+	</script>
 	</body>
 </html>
