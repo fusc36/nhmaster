@@ -141,7 +141,7 @@ cython_debug/
 config.py
 
 # ln
-app/
+doujins/
 app/doujins/
 app/static/doujins/
 

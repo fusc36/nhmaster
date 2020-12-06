@@ -1,0 +1,92 @@
+body {
+	margin: 0;
+}
+
+.navbar {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #222;
+	height: 45px;
+	width: 100%;
+}
+
+.navbar li {
+	float: left;
+	border-right: 1px solid #bbb;
+	height: 100%;
+	width: auto;
+}
+
+.navbar li.shift-right {
+	float: right;
+	border-right: 1px solid #bbb;
+	height: 100%;
+	width: auto;
+}
+
+.navbar li:last-child {
+	border-right: none;
+}
+
+.navbar .center {
+	display: flex;
+	width: auto;
+	line-height: 22px;
+}
+
+.navbar li a {
+	white-space: nowrap;
+	display: flex;
+	color: white;
+	text-align: center;
+	padding: 12px 12px;
+	text-decoration: none;
+	font-size: 12px;
+	line-height: 22px;
+}
+
+.navbar li a:hover {
+	background-color: #5555ff;
+	color: white;
+}
+
+.navbar-button {
+	whitespace: nowrap;
+	background-color: #222;
+	border: none;
+	color: white;
+	display: flex;
+	padding: 12px 12px;
+	text-align: center;
+	font-size: 12px;
+	line-height: 22px;
+	outline: none;
+}
+
+.navbar-button:hover {
+	background-color: #5555ff;
+	color: white;
+}
+
+.navbar-button:active {
+	border-style: outset;
+}
+
+.navbar p {
+	white-space: nowrap;
+	background-color: #222;
+	border: none;
+	color: white;
+	display: block;
+	text-align: center;
+	padding: 12px 12px;
+	font-size: 12px;
+	margin: 0px;
+	line-height: 22px;
+}
+
+.navbar li .center {
+	text-align: center;
+}
