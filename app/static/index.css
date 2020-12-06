@@ -4,6 +4,7 @@
 	grid-column-gap: 5px;
 	grid-row-gap: 5px;
 }
+
 .thumbnail {
 	max-width: 190px;
 	max-height: auto;
@@ -13,6 +14,8 @@
 	text-align: center;
 }
 
-.topbar {
-	float: left;
+body {
+	margin: 0;
 }
+
+

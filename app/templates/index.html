@@ -3,12 +3,22 @@
 	<head>
 		<title>Index</title>
 		<link rel="stylesheet" href="/static/index.css">
+		<link rel="stylesheet" href="/static/navbar.css">
 	</head>
 	<body>
-		<form action="/download"><input class="topbar" type="submit" value="Add new link/id" /></form>
-		<form action="/tasks"><input class="topbar" type="submit" value="Visit Tasks Page" /></form>
-		<button class="topbar" onclick="update_list()">Refresh</button><br><br>
-		<div class="grid-container" id="grid-container">
+		<!--
+		<div class="topbar" id="topbar">
+			<a href="/download">Add new link/id</a>
+			<a href="/tasks">Tasks</a>
+			<button class="topbar-button" onclick="update_list()">Refresh</button>
+		</div>
+		-->
+		<ul id="navbar" class="navbar">
+			<li><a href="/download">Add new link/id</a></li>
+			<li><a href="/tasks">Tasks</a></li>
+			<li><button class="navbar-button" onclick="update_list()">Refresh</button></li>
+		</ul>
+		<div class="grid-container" id="grid-container" style="margin: 12px;">
 			<!--
 			{% for (id, json) in db.get_all() %}
 			<div class="grid-item">

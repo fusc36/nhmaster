@@ -7,14 +7,23 @@
 	<head>
 		<title>Page {{ pnumber }}</title>
 		<link rel="stylesheet" type="text/css" href="/static/portrait.css">
+		<link rel="stylesheet" type="text/css" href="/static/navbar.css">
 	</head>
 	<body>
-		<p class="label">Page {{ pnumber }} of {{ total_pagenum }}</p>
-		<div id="navbar">
-			{% if pnumber > 1 %}<form action="{{ prev_link }}" style="float: left;"><input type="submit" value="Prev" /></form> {% endif %}
-			<form action="/" style="float: center;"><input type="submit" value="Home" /></form>
-			{% if pnumber < total_pagenum %}<form action="{{ next_link }}" style="float: right;"><input type="submit" value="Next" /></form> {% endif %}
+		<!--
+		<div id="topbar" class="topbar">
+			{% if pnumber > 1 %}<a href="{{ prev_link }}">Previous</a>{% endif %}
+			<p class="center">Page {{ pnumber }} of {{ total_pagenum }}</p>
+			<a href="/">Home</a>
+			{% if pnumber < total_pagenum %}<a href="{{ next_link }}" style="float: right;">Next</a>{% endif %}
 		</div>
+		-->
+		<ul class="navbar" id="navbar">
+			{% if pnumber > 1 %}<li><a href="{{ prev_link }}">Previous</a>{% endif %}
+			<li class="center"><p class="center">Page {{pnumber}} of {{ total_pagenum }}</p></li>
+			<li><a href="/">Home</a></li>
+			{% if pnumber < total_pagenum %}<li class="shift-right"><a href="{{ next_link }}" style="float: right;">Next</a></li>{% endif %}
+		</ul>
 		<div class="imagebox">
 			{% if pnumber < total_pagenum %}<a href="{{ next_link }}">{% endif %}
 				<img src="{{ db.get_file_path(id, pnumber) }}">

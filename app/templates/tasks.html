@@ -6,38 +6,43 @@
 <html>
 	<head>
 		<title>Tasks</title>
-		<link rel="text/stylesheet" href="/static/tasks.css">
+		<link rel="stylesheet" href="/static/tasks.css">
+		<link rel="stylesheet" href="/static/navbar.css">
 	</head>
 	<body>
-		<a href="/"><button>Home</button></a> 
-		<h4>Max Concurrent Downloads: {{ task_manager.thread_pool_limit }}</h4>
-		<h4>Processing</h4>
-		<div id="processing" class="grid-container">
-			{% if task_manager.cur_tasks|length > 0 %}
-				{% for task_id in task_manager.cur_tasks %}
-					<div class="grid-item">{{ task_id }}<div>
+		<ul class="navbar" id="navbar">
+			<li><a href="/">Home</a></li> 
+		</ul>
+		<div class="content" style="margin: 12px;">
+			<h4>Max Concurrent Downloads: {{ task_manager.thread_pool_limit }}</h4>
+			<h4>Processing</h4>
+			<div id="processing" class="grid-container">
+				{% if task_manager.cur_tasks|length > 0 %}
+					{% for task_id in task_manager.cur_tasks %}
+						<div class="grid-item">{{ task_id }}<div>
+					{% endfor %}
+				{% else %}
+					<p>Not currently processing any tasks...</p>
+				{% endif %}
+			</div><br>
+			<h4>Queued</h4>
+			<div id="queued" class="grid-container">
+				{% for (id, _) in task_manager.queue %}
+					<div class="grid-item">{{ id }}</div>
 				{% endfor %}
-			{% else %}
-				<p>Not currently processing any tasks...</p>
-			{% endif %}
-		</div><br>
-		<h4>Queued</h4>
-		<div id="queued" class="grid-container">
-			{% for (id, _) in task_manager.queue %}
-				<div class="grid-item">{{ id }}</div>
-			{% endfor %}
-		</div><br>
-		<h4>Complete</h4>
-		<div id="complete" class="grid-container">
-			{% for id in recent_complete %}
-			<div class="grid-item">Complete - {{ id }}</div>
-			{% endfor %}
-		</div><br>
-		<h4>Errors</h4>
-		<div id="error" class="grid-container">
-			{% for (_, result) in recent_error %}
-			<div class="grid-item">{{ result }}</div>
-			{% endfor %}
-		</div>
+			</div><br>
+			<h4>Complete</h4>
+			<div id="complete" class="grid-container">
+				{% for id in recent_complete %}
+				<div class="grid-item">Complete - {{ id }}</div>
+				{% endfor %}
+			</div><br>
+			<h4>Errors</h4>
+			<div id="error" class="grid-container">
+				{% for (_, result) in recent_error %}
+				<div class="grid-item">{{ result }}</div>
+				{% endfor %}
+			</div>
+	</div>
 	</body>
 </html>
