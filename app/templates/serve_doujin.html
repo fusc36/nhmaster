@@ -30,7 +30,7 @@
 			{% if pnumber < total_pagenum %}</a>{% endif %}
 		</div>
 	</body>
-	<script type="text/javascript" src="/static/portrait.js"></script>
+	<!--<script type="text/javascript" src="/static/portrait.js"></script>-->
 	<script>
 		// Quick Navigation
 		document.body.addEventListener("keydown", function (event) {
@@ -52,13 +52,21 @@
 		});
 
 		// Cache Images
+		/*
 		preloadImages([
 			{% if pnumber > 1 %}
 				"{{ db.get_file_path(id, pnumber - 1) }}",
 			{% endif %}
-			{% if pnumber < total_pagenum%}
+			{% if pnumber < total_pagenum %}
 				"{{ db.get_file_path(id, pnumber + 1) }}",
 			{% endif %}
 		], true);
+		*/
 	</script>
+	{% if pnumber > 1 %}
+	<link rel="prefetch" href="{{ db.get_file_path(id, pnumber - 1) }}">
+	{% endif %}
+	{% if pnumber < total_pagenum %}
+	<link rel="prefetch" href="{{ db.get_file_path(id, pnumber + 1) }}">
+	{% endif %}
 </html>
