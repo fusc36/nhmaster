@@ -1,3 +1,7 @@
+12/30/2020
+================
+* Added doujin filtering by tag. Prefix the searched tag with a hash (#).
+
 12/29/2020
 ================
 * Merry belated Christmas!

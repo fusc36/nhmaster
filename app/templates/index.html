@@ -62,22 +62,32 @@
 			$('#grid-container').append(grid_item_tag);
 			console.log('added ' + id);
 		});
-		fuse = new Fuse(masterlist, options);
+		tagfuse = new Fuse(masterlist, tagOption);
+		normfuse = new Fuse(masterlist, normOption);
 	}
 
-	const options = {
+	const normOption = {
 		threshold: 0.2,
 		keys: [
 			'title',
 			'id'
 		]
 	};
+	const tagOption = {
+		threshold: 0.2,
+		keys: ['tags']
+	};
 	update_list();
-	var fuse = new Fuse(masterlist, options);
+	var tagfuse = new Fuse(masterlist, tagOption);
+	var normfuse = new Fuse(masterlist, normOption);
 	function searchFilter() {
 		var searchText = $('#doujinsearch').val();
 		if (searchText != "") {
-			var searchResult = fuse.search(searchText);
+			if (searchText.startsWith('#')) {
+				var searchResult = tagfuse.search(searchText.slice(1));
+			} else {
+				var searchResult = normfuse.search(searchText);
+			}
 			var match_id = [];
 			searchResult.forEach(function (item, idx) {
 				var id = item['item']['id'];
@@ -91,6 +101,11 @@
 				} else {
 					elem.hide();
 				}
+			});
+		} else {
+			//Show all elems
+			masterlist.forEach(function (item, idx) {
+				$('#' + item['id']).show();
 			});
 		}
 	}
