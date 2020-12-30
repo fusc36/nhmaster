@@ -14,7 +14,7 @@ If you want to add features or fix bugs, feel free to send a pull request or for
 # Setup
 
 * Run `python3 -m pip install -r requirements.txt` (or `python -m pip install -r requirements.txt` or `pip install -r requirements.txt` or...)
-* Edit `config.py` and add the path to where you want to store your comics (default is `app/doujins`)
+* Run `cp config.py.example config.py` and edit `config.py`. Add the path to where you want to store your doujins (default is `app/static/doujins`)
 * _IMPORTANT:_ Symlink the doujin download path to `app/static/doujins` (i.e. `ln -s /path/to/doujin/download/path ./app/static/doujins`)
 
 # Usage
