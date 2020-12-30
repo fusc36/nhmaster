@@ -16,6 +16,7 @@
 		<ul id="navbar" class="navbar">
 			<li><a href="/download">Add new link/id</a></li>
 			<li><a href="/tasks">Tasks</a></li>
+			<li><input type="text" id="doujinsearch" oninput="searchFilter()" placeholder="Search collection..."></li>
 			<li><button class="navbar-button" onclick="update_list()">Refresh</button></li>
 		</ul>
 		<div class="grid-container" id="grid-container" style="margin: 12px;">
@@ -29,6 +30,8 @@
 			-->
 		</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.3"></script>
+	<!-- todo: host these instead of using cdn-->
 	<script type="text/javascript">
 	const URL = '/api';
 	var masterlist = [];
@@ -55,12 +58,42 @@
 			var img_tag = $('<img></img>').attr('class', 'thumbnail').attr('src', thumbnail_url);
 			var link_tag = $('<a></a>').attr('href', '/' + id + '/').append(img_tag)
 			var title_tag = $('<p></p>').attr('class', 'title').text(title);
-			var grid_item_tag = $('<div></div>').attr('class', 'grid-item').append(link_tag, title_tag);
+			var grid_item_tag = $('<div></div>').attr('class', 'grid-item').attr('id', id.toString()).append(link_tag, title_tag);
 			$('#grid-container').append(grid_item_tag);
 			console.log('added ' + id);
 		});
+		fuse = new Fuse(masterlist, options);
 	}
+
+	const options = {
+		threshold: 0.2,
+		keys: [
+			'title',
+			'id'
+		]
+	};
 	update_list();
+	var fuse = new Fuse(masterlist, options);
+	function searchFilter() {
+		var searchText = $('#doujinsearch').val();
+		if (searchText != "") {
+			var searchResult = fuse.search(searchText);
+			var match_id = [];
+			searchResult.forEach(function (item, idx) {
+				var id = item['item']['id'];
+				match_id.push(id);
+			});
+			masterlist.forEach(function (item, idx) {
+				var id = item['id'];
+				var elem = $('#' + id);
+				if (match_id.includes(id)) {
+					elem.show();
+				} else {
+					elem.hide();
+				}
+			});
+		}
+	}
 	</script>
 	</body>
 </html>

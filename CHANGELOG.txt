@@ -1,3 +1,9 @@
+12/29/2020
+================
+* Merry belated Christmas!
+* Added doujin filtering by title or id. Use the top search bar to filter.
+	* Filtering by tag soon
+
 12/5/2020
 ================
 * Navbar theme revamped (CSS is a bitch)
