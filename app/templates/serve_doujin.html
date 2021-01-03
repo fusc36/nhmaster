@@ -26,21 +26,22 @@
 		</ul>
 		<div class="imagebox">
 			{% if pnumber < total_pagenum %}<a href="{{ next_link }}">{% endif %}
-				<img src="{{ db.get_file_path(id, pnumber) }}">
+				<img class="height-contain" src="{{ db.get_file_path(id, pnumber) }}">
 			{% if pnumber < total_pagenum %}</a>{% endif %}
 		</div>
 	</body>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<!--<script type="text/javascript" src="/static/portrait.js"></script>-->
 	<script>
-		// Quick Navigation
+		// Hotkeys
 		document.body.addEventListener("keydown", function (event) {
-			{% if prev_link %}
+			{% if pnumber > 1 %}
 			if (event.keyCode === 37 || event.keyCode === 52) {
 				window.location.href = "{{ prev_link }}";
 				console.log("back");
 			}
 			{% endif %}
-			{% if next_link %}
+			{% if pnumber < total_pagenum %}
 			if (event.keyCode === 39 || event.keyCode === 53) {
 				window.location.href = "{{ next_link }}";
 				console.log("next");
@@ -49,7 +50,20 @@
 			if (event.keyCode === 54) {
 				window.location.href = "/";
 			}
+
+			// Height / Width Toggle
+			if (event.keyCode === 70) { // f
+				console.log('pressed');
+				var tag = $('img');
+				if (tag.attr('class') === 'height-contain') {
+					tag.attr('class', 'width-contain');
+				} else {
+					tag.attr('class', 'height-contain');
+				}
+			}
 		});
+
+		
 
 		// Cache Images
 		/*
