@@ -1,3 +1,7 @@
+1/28/2021
+================
+* Updated to use new methods specified by hentai 3.2.*
+
 1/2/2021
 ================
 * Fixed a bug where pressing the right arrow key at the end of a doujin will continue to the next (non-existent) page, returning a 500.

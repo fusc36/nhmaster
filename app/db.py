@@ -47,8 +47,10 @@ class DB:
 		# Get json
 		doujin = hentai.Hentai(id)
 		d_json = cls.add_json(doujin)
+		dest = pathlib.Path(cls.path) / str(id)
+		os.mkdir(dest)
 		# Download
-		doujin.download(dest=pathlib.Path(cls.path))
+		doujin.download(folder=dest)
 		new_path =  os.path.join(cls.path, str(id))
 		try:
 			os.rename(os.path.join(cls.path, d_json['title']), new_path)
