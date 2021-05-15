@@ -1,6 +1,8 @@
 5/15/2021
 ================
 * Merged "Add link" and "Tasks" page into one
+* Moved from using first image in doujin for thumbnails to creating dedicated thumbnails
+	* Added "Repair" button to update existing libraries to reflect this change
 
 1/28/2021
 ================

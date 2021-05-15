@@ -2,6 +2,8 @@ from flask import Flask, render_template, redirect, url_for, request, jsonify
 from .db import DB
 from .tasks import TaskManager
 import traceback
+from .thumbnail import resize
+import os
 
 
 app = Flask(__name__)
@@ -80,10 +82,20 @@ def doujin_download_tasks():
 def retrieve_json_data():
 	doujins = DB.doujins.copy() # We should copy it so we don't modify it
 	for id in doujins.keys():
-		doujins[id]['thumbnail'] = DB.get_file_path(id, 1)
+		doujins[id]['thumbnail'] = DB.get_file_path(id, 0)
+	DB.doujins = doujins
 	return jsonify(doujins)
 
-
+@app.route('/repair', methods=['POST'])
+def repair():
+	doujins = DB.doujins
+	for id in doujins.keys():
+		#print(doujins[id]['thumbnail'])
+		if 'thumbnail.png' not in doujins[id]['thumbnail']:
+			cover_path = os.path.join(os.path.dirname(__file__), DB.get_file_path(id, 1)[1:])
+			#print(cover_path)
+			resize(cover_path, 190)
+	return '', 200
 
 
 def url_to_id(url):

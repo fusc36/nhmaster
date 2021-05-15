@@ -4,6 +4,7 @@ import pathlib
 from urllib.parse import quote
 import os
 from pprint import pprint
+from .thumbnail import resize
 
 '''
 Methods
@@ -58,6 +59,12 @@ class DB:
 			pass
 		with open(os.path.join(new_path, 'info.json'), 'w') as f:
 			f.write(json.dumps(d_json))
+
+		# Create thumbnail
+		page_path = cls.get_file_path(id, 1)
+		cover = os.path.join(cls.path, '/'.join(page_path.split('/')[-2:]))
+		resize(cover, 190)
+
 		cls.update()
 
 	@classmethod
@@ -91,6 +98,8 @@ class DB:
 
 	@classmethod
 	def get_file_path(cls, id, page_number):
+		if page_number == 0: # Code for thumbnail/cover
+			return os.path.join('/static/doujins/', os.path.join(str(id), 'thumbnail.png'))
 		jpg_snippet = os.path.join(str(id), str(page_number) + '.jpg')
 		png_snippet = os.path.join(str(id), str(page_number) + '.png')
 		if not cls.path:
