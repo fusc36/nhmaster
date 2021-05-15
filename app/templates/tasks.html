@@ -13,6 +13,13 @@
 		<ul class="navbar" id="navbar">
 			<li><a href="/">Home</a></li> 
 		</ul>
+		<h3>Download</h3>
+		<form action="/download", method="post">
+			<label for="id">ID/URL:</label>
+			<textarea id="id" name="id" rows="8" cols="50"></textarea><br><br>
+			<input type="submit" value="Submit">
+		</form>
+		<h3>Current Downloads</h3>
 		<div class="content" style="margin: 12px;">
 			<h4>Max Concurrent Downloads: {{ task_manager.thread_pool_limit }}</h4>
 			<h4>Processing</h4>

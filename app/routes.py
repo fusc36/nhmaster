@@ -38,9 +38,11 @@ def doujin_serve(id, page_number):
 		return render_template('serve_doujin.html', db=DB, json=json, pnumber=page_number, id=id)
 	return 404
 
+'''
 @app.route('/download', methods=['GET'])
 def doujin_download():
 	return render_template('download.html', db=DB)
+'''
 
 @app.route('/download', methods=['POST'])
 def doujin_download_post():

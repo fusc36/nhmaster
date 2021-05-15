@@ -1,3 +1,7 @@
+5/15/2021
+================
+* Merged "Add link" and "Tasks" page into one
+
 1/28/2021
 ================
 * Updated to use new methods specified by hentai 3.2.*
